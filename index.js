@@ -1,0 +1,53 @@
+import express from "express";
+import nodemailer from "nodemailer";
+import cors from "cors";
+import dotenv from "dotenv";
+
+dotenv.config();
+const app = express();
+app.use(express.json());
+app.use(cors());
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
+app.post("/send-email", async (req) => {
+  console.log("req.body", req.body);
+  const { dataFromInput, subject } = req.body;
+  const emailOptions = {
+    from: process.env.EMAIL_USER,
+    to: dataFromInput.email,
+    subject: subject,
+    html: `
+      <p>ชื่อ-นามสกุล: ${dataFromInput.name}</p>
+      <p>อีเมล์: ${dataFromInput.email}</p>
+      <p>เบอร์โทรศัพท์: ${dataFromInput.phone}</p>
+      <p>------------------------------------------------------</p>
+      <p>รายละเอียด</p>
+      <p>${dataFromInput.message}</p>
+    `,
+  };
+
+  try {
+    await transporter.sendMail(emailOptions);
+    console.log("Verification email sent!");
+  } catch (error) {
+    if (error.responseCode === 535 || error.responseCode === 550) {
+      // SMTP authentication หรือ invalid recipient
+      createError(400, "Invalid email or authentication error");
+    } else if (error.code === "ECONNREFUSED") {
+      // การเชื่อมต่อ SMTP ล้มเหลว
+      createError(503, "Email service unavailable");
+    } else {
+      // ข้อผิดพลาดทั่วไป
+      createError(500, `Failed to send email ${error}`);
+    }
+  }
+});
+
+app.listen(8888, () => console.log("Server running on port 8888"));
