@@ -59,4 +59,4 @@ app.post("/send-email", async (req) => {
   }
 });
 
-app.listen(8888, () => console.log("Server running on port 8888"));
+app.listen(8888, "0.0.0.0", () => console.log("Server running on port 8888"));
