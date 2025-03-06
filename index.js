@@ -32,9 +32,9 @@ app.post("/send-email", async (req, res) => {
   const { dataFromInput, subject } = req.body;
   const emailOptions = {
     from: process.env.EMAIL_USER, // ใช้บัญชีของเซิร์ฟเวอร์เป็นผู้ส่ง
-    // to: "info@chanasoapofficial.com",
-    to: "nuppasorn.s@gmail.com",
-    replyTo: dataFromInput.email,
+    to: "chanasoapsetting@gmail.com",
+    replyTo: "nuppasorn.s@gmail.com",
+    //replyTo: "info@chanasoapofficial.com",
     subject: subject,
     html: `
       <p>ชื่อ-นามสกุล: ${dataFromInput.name}</p>
