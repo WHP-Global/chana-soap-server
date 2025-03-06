@@ -5,6 +5,17 @@ import dotenv from "dotenv";
 
 dotenv.config();
 const app = express();
+
+// กำหนดให้รับคำขอจากโดเมนที่ต้องการ
+const corsOptions = {
+  origin: "http://www.chanasoapofficial.com", // กำหนดโดเมนที่อนุญาต
+  methods: ["GET", "POST"],
+  allowedHeaders: ["Content-Type"],
+};
+
+app.use(cors(corsOptions)); // ใช้ cors ในการตั้งค่า
+
+app.use(express.json());
 app.use(express.json());
 app.use(cors());
 
