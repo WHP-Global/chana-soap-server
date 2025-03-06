@@ -8,12 +8,14 @@ const app = express();
 
 // กำหนดให้รับคำขอจากโดเมนที่ต้องการ
 const corsOptions = {
-  origin: "http://www.chanasoapofficial.com", // กำหนดโดเมนที่อนุญาต
+  origin: "http://www.chanasoapofficial.com",
   methods: ["GET", "POST"],
   allowedHeaders: ["Content-Type"],
 };
 
 app.use(cors(corsOptions)); // ใช้ cors ในการตั้งค่า
+
+// app.use(cors()); // ใช้ cors ในการตั้งค่า
 
 app.use(express.json());
 
@@ -25,7 +27,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-app.post("/send-email", async (req) => {
+app.post("/send-email", async (req, res) => {
   console.log("req.body", req.body);
   const { dataFromInput, subject } = req.body;
   const emailOptions = {
@@ -46,6 +48,7 @@ app.post("/send-email", async (req) => {
   try {
     await transporter.sendMail(emailOptions);
     console.log("Verification email sent!");
+    res.status(200).json({ message: "Email sent successfully" });
   } catch (error) {
     if (error.responseCode === 535 || error.responseCode === 550) {
       // SMTP authentication หรือ invalid recipient
