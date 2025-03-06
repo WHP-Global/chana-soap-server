@@ -16,8 +16,6 @@ const corsOptions = {
 app.use(cors(corsOptions)); // ใช้ cors ในการตั้งค่า
 
 app.use(express.json());
-app.use(express.json());
-app.use(cors());
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
