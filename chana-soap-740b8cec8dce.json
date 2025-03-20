@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "chana-soap",
+  "private_key_id": "740b8cec8dcef6b6170557759dc5e780f0370d50",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCmUocEDsO68vtc\nqt6iMPkLuOeIbPKcPJgyS31XeMvkRgVWi3jOoGa8DKqigshVMeC/BncY22qLRtCZ\n32kz1DhNGSZ7lIqrUoonI3A1LE/eBM4NHxWU588Ok9+r6W+Ckc3nqgdhBaiJnA3X\nPgvUL3EmfJ/rUyr6c2fkAcYPjAAyzgmRyCO+NM3u6gax18zVgaNwSX6AFEnjElrQ\nIPn3Y3vwCvwiKI5pS/NoQvliTNBm2sq6FMFBGODp0AU/3F0wi1gB+KzqjXxiGqoU\nBLCknFYRUdMkOfVvoPj+OhgokoIgRnADY9uZCs8tu0sEZc+sH1i3axXuprVW3OAG\ncZc5hcXRAgMBAAECggEABDTbIFGlRqGllNLnfY+ihNbg2DT1L9liegcpvOAbvAK/\nWNB/Ni6dWo0xdZm8KldwGTS3J2RJPguE9BdP6FUqNVz4+bAoj6uvPc0qJdYgkPtr\nIK7UE2eHd5Vq10S4osNAQ2cr95q2iABv4y05DF1EzdXiD4gTcrEfhAc9dKA0UxST\nfTogaDGlSpd0I+cZJBqu9vvt+BwP0nQlUNqKcOVTx5dDuG25zETVQldDn6IMzMHo\nYfj+EiitPloZL8OfBog8SfVvXwRP+HCopsCfURfYNUlZcTzvrVDT2HgKj6vd8enq\nZSi0PhIlgh1pdOg7siTPhdw8P1YCLAUVo2MwD2RaKQKBgQDUdoEz3WdVhtQOpu4O\nuh/5/r3xoB77VLBFGx4tlLKZYnSmmEKDWW5vE5O4JdUXfKateSMqsKKNS5WoW4re\nA5jgrQJtizoq6OunRuJIbHZM9yKyLwXO5tnEpwmHyJNDVljVHCztai/QPX/kEMk8\nVUGcT45B6DdnMXgJBDyAMfRzfQKBgQDIZ46oeRTnziOaFRHkiJq4ZjWbO4q/TUmj\n4L4F2brlp5rrZuySg9YtHgGBMbTlCjhDREidGuNOSP8MXiGmYc5GfvAExCcSCGph\n9LVa50T0xZ03QyRo6J0DzDPhRg+Fj32U3j29zEGxSYQjBZNesOjA27yvpCpXo+z2\ncYPeBoAD5QKBgHYQ4J20xI63nTIDO7k9XzWqhV03sN/T4RyWBEAqKNGp788AP74E\nPaVGSMmFZJRntawi7BL2E27XePQU4uebMiJwoi/DtfBQfVv4vRioBVmh4EsKbHzc\ntllcxaQKJyO9YSIURTct0iIzetV/KoT3j71QTGp9pAQZbm38R66plAF1AoGBAIof\nHaqt8SOm5tC+rttU71YiU9YOnp0k9pk1P6KmovK/pr2R7YE5zjbAVIcnrCaj+Y0b\nFfT54CpHk0mB4y1agaICwQh37Pm3xSKIVyo09UjCno3E/+YyVG2WozcjY3VJJWOi\nHOmgSrKXGbRNlnmP8othp1VjDy/iMmLUb+9piXelAoGBALYf1AO9rzMFaDtn6+wX\nPykyxp/EZNswpspr4H7dkiOwdg44cZ/U1dReDlpRenSdBslDcYg/KPN99ffzqQ4g\n7mFNd7tYQXADanP11AHekkzgnOv0T5fFJXioZZNY5CivcWbOPZFvPn3sr+QLJFcJ\ndzwyOV0VFpEomNHOX4RrIOVJ\n-----END PRIVATE KEY-----\n",
+  "client_email": "drive-service@chana-soap.iam.gserviceaccount.com",
+  "client_id": "116551121591237317059",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/drive-service%40chana-soap.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
