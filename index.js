@@ -33,7 +33,7 @@ app.post("/send-email", async (req, res) => {
     from: `"Art & Alice Website Contact" <info@artandalice.co>`,
     to: "info@artandalice.co",
     replyTo: dataFromInput.email,
-    subject: subject,
+    subject: `จากคุณ ${dataFromInput.name} - ${subject}`,
     html: `
     <p><strong>ชื่อ-นามสกุล:</strong> ${dataFromInput.name}</p>
     <p><strong>อีเมล์:</strong> ${dataFromInput.email}</p>
