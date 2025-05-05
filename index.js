@@ -20,7 +20,7 @@ app.use(cors(corsOptions)); // ใช้ cors ในการตั้งค่�
 app.use(express.json());
 
 const transporter = nodemailer.createTransport({
-  host: smtp.zoho.com,
+  host: "smtp.zoho.com",
   port: 465,
   secure: true,
   auth: {
@@ -33,7 +33,7 @@ app.post("/send-email", async (req, res) => {
   console.log("req.body", req.body);
   const { dataFromInput, subject } = req.body;
   const emailOptions = {
-    from: process.env.EMAIL_USER, // ใช้บัญชีของเซิร์ฟเวอร์เป็นผู้ส่ง
+    from: '"Art & Alice" <info@artandalice.co>', // ใช้บัญชีของเซิร์ฟเวอร์เป็นผู้ส่ง
     to: "info@artandalice.co",
     replyTo: dataFromInput.email,
     subject: subject,
