@@ -20,8 +20,8 @@ app.use(cors(corsOptions)); // ใช้ cors ในการตั้งค่�
 app.use(express.json());
 
 const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_USER,
-  service: "gmail",
+  host: smtp.zoho.com,
+  port: 465,
   secure: true,
   auth: {
     user: process.env.EMAIL_USER,
