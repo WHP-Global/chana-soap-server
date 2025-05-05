@@ -30,7 +30,7 @@ app.post("/send-email", async (req, res) => {
   console.log("req.body", req.body);
   const { dataFromInput, subject } = req.body;
   const emailOptions = {
-    from: `"${dataFromInput.name} (Art & Alice Contact)" <info@artandalice.co>`,
+    from: `"Art & Alice Website Contact" <info@artandalice.co>`,
     to: "info@artandalice.co",
     replyTo: dataFromInput.email,
     subject: subject,
