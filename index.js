@@ -8,7 +8,7 @@ const app = express();
 
 // กำหนดให้รับคำขอจากโดเมนที่ต้องการ
 const corsOptions = {
-  origin: "http://www.artandalice.co",
+  origin: "https://www.artandalice.co",
   methods: ["GET", "POST"],
   allowedHeaders: ["Content-Type"],
 };
