@@ -30,21 +30,20 @@ app.post("/send-email", async (req, res) => {
   console.log("req.body", req.body);
   const { dataFromInput, subject } = req.body;
   const emailOptions = {
-    from: '"Art & Alice" <info@artandalice.co>', // ใช้บัญชีของเซิร์ฟเวอร์เป็นผู้ส่ง
+    from: `"${dataFromInput.name} (Art & Alice Contact)" <info@artandalice.co>`,
     to: "info@artandalice.co",
     replyTo: dataFromInput.email,
     subject: subject,
     html: `
-      <p>ชื่อ-นามสกุล: ${dataFromInput.name}</p>
-      <p>อีเมล์: ${dataFromInput.email}</p>
-      <p>เบอร์โทรศัพท์: ${dataFromInput.phone}</p>
-      <p>------------------------------------------------------</p>
-      <p>รายละเอียด</p>
-      <p>${dataFromInput.message}</p>
-    `,
+    <p><strong>ชื่อ-นามสกุล:</strong> ${dataFromInput.name}</p>
+    <p><strong>อีเมล์:</strong> ${dataFromInput.email}</p>
+    <p><strong>เบอร์โทรศัพท์:</strong> ${dataFromInput.phone}</p>
+    <hr />
+    <p><strong>รายละเอียด:</strong></p>
+    <p>${dataFromInput.message}</p>
+  `,
   };
-
-  try {
+  เมื่อคุณใช้แบบนี้: try {
     await transporter.sendMail(emailOptions);
     console.log("Verification email sent!");
     res.status(200).json({ message: "Email sent successfully" });
