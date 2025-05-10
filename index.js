@@ -22,14 +22,16 @@ const corsOptions = {
       "https://artandalice.co",
       "http://localhost:5173",
     ];
+    // สำหรับ request แบบไม่มี Origin (เช่น curl หรือ server-side), ให้อนุญาต
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS"));
     }
   },
-  methods: ["GET", "POST", "PUT"],
-  allowedHeaders: ["Content-Type"],
+  credentials: true, // ✅ หากมีการใช้ cookies/token
+  methods: ["GET", "POST", "PUT", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 };
 
 app.use(cors(corsOptions)); // ใช้ cors ในการตั้งค่า
