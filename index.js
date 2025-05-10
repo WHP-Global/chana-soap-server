@@ -71,50 +71,16 @@ app.post("/send-email", async (req, res) => {
   }
 });
 
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = dirname(__filename);
-
-// app.use(express.static(path.join(__dirname, "public")));
-// app.use("/upload", uploadRoute);
-
-// 👉 1. ให้เสิร์ฟ static ก่อน
+// ให้เสิร์ฟ static ก่อน
 const publicPath = path.join(__dirname, "public");
 app.use(express.static(publicPath));
-
-// 👉 2. จากนั้นให้ React จัดการ route ที่เหลือ
-// app.get(
-//   /^\/(?!.*\.(jpg|jpeg|png|gif|css|js|ico|svg|woff|ttf)).*$/,
-//   (req, res) => {
-//     res.sendFile(path.join(publicPath, "index.html"));
-//   }
-// );
-
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, "public/AboutUs/"); // เก็บไฟล์ในโฟลเดอร์ public/AboutUs
-//   },
-//   filename: (req, file, cb) => {
-//     cb(null, file.originalname); // ใช้ชื่อไฟล์เดิมจากฟอร์ม
-//   },
-// });
-
-// // Route สำหรับอัปโหลดไฟล์
-// app.post("/upload", upload.single("file"), (req, res) => {
-//   if (req.file) {
-//     res.json({
-//       success: true,
-//       filePath: `/AboutUs/${req.file.filename}`, // ส่ง path ของไฟล์กลับไปที่ frontend
-//     });
-//     console.log("req.file.filename", req.file.filename);
-//   } else {
-//     res.status(400).json({ success: false, message: "อัปโหลดล้มเหลว" });
-//   }
-// });
 
 // ตั้งค่า storage สำหรับ multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "public/AboutUs/"); // กำหนดโฟลเดอร์ที่เก็บไฟล์
+    const folderName = req.body.folderName;
+    const targetPath = path.join("public", folderName);
+    cb(null, targetPath);
   },
   filename: (req, file, cb) => {
     // ดึงชื่อไฟล์จากฟอร์ม
