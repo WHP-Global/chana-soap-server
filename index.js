@@ -14,6 +14,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const app = express();
 
+// ให้เสิร์ฟ static ก่อน
+const publicPath = path.join(__dirname, "public");
+app.use(express.static(publicPath));
+
 // กำหนดให้รับคำขอจากโดเมนที่ต้องการ
 const corsOptions = {
   origin: function (origin, callback) {
@@ -73,10 +77,6 @@ app.post("/send-email", async (req, res) => {
     res.status(500).json({ error: "Failed to send email" });
   }
 });
-
-// ให้เสิร์ฟ static ก่อน
-const publicPath = path.join(__dirname, "public");
-app.use(express.static(publicPath));
 
 // ตั้งค่า storage สำหรับ multer
 const storage = multer.diskStorage({
