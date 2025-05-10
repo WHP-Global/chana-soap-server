@@ -19,6 +19,7 @@ const corsOptions = {
   origin: function (origin, callback) {
     const allowedOrigins = [
       "https://www.artandalice.co",
+      "https://artandalice.co",
       "http://localhost:5173",
     ];
     if (!origin || allowedOrigins.includes(origin)) {
