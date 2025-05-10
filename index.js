@@ -82,9 +82,12 @@ const publicPath = path.join(__dirname, "public");
 app.use(express.static(publicPath));
 
 // 👉 2. จากนั้นให้ React จัดการ route ที่เหลือ
-app.get("*", (req, res) => {
-  res.sendFile(path.join(publicPath, "index.html"));
-});
+app.get(
+  /^\/(?!.*\.(jpg|jpeg|png|gif|css|js|ico|svg|woff|ttf)).*$/,
+  (req, res) => {
+    res.sendFile(path.join(publicPath, "index.html"));
+  }
+);
 
 // const storage = multer.diskStorage({
 //   destination: (req, file, cb) => {
