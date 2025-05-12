@@ -14,11 +14,15 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const app = express();
 
-// ให้เสิร์ฟ static ก่อน
+// สร้างโฟลเดอร์ temp_uploads ถ้ายังไม่มี
+const tempDir = path.join(__dirname, "temp_uploads");
+if (!fs.existsSync(tempDir)) {
+  fs.mkdirSync(tempDir, { recursive: true });
+}
+
 const publicPath = path.join(__dirname, "public");
 app.use(express.static(publicPath));
 
-// กำหนดให้รับคำขอจากโดเมนที่ต้องการ
 const corsOptions = {
   origin: function (origin, callback) {
     const allowedOrigins = [
@@ -26,33 +30,31 @@ const corsOptions = {
       "https://artandalice.co",
       "http://localhost:5173",
     ];
-    // สำหรับ request แบบไม่มี Origin (เช่น curl หรือ server-side), ให้อนุญาต
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS"));
     }
   },
-  credentials: true, // ✅ หากมีการใช้ cookies/token
+  credentials: true,
   methods: ["GET", "POST", "PUT", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+  allowedHeaders: ["Content-Type", "Authorization", "Cache-Control"], // เพิ่ม Cache-Control ที่นี่
 };
 
-app.use(cors(corsOptions)); // ใช้ cors ในการตั้งค่า
+app.use(cors(corsOptions));
 app.use(express.json());
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.zoho.com", // Zoho SMTP
+  host: "smtp.zoho.com",
   port: 465,
-  secure: true, // ใช้ SSL
+  secure: true,
   auth: {
-    user: process.env.EMAIL_USER, // Zoho email user เช่น "chanasoapsetting@gmail.com"
-    pass: process.env.EMAIL_PASS, // รหัสผ่าน Zoho หรือ App Password (ถ้าเปิด 2FA)
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
 });
 
 app.post("/send-email", async (req, res) => {
-  console.log("req.body", req.body);
   const { dataFromInput, subject } = req.body;
   const emailOptions = {
     from: `"Art & Alice Website Contact" <info@artandalice.co>`,
@@ -60,17 +62,17 @@ app.post("/send-email", async (req, res) => {
     replyTo: dataFromInput.email,
     subject: `จากคุณ ${dataFromInput.name} - ${subject}`,
     html: `
-    <p><strong>ชื่อ-นามสกุล:</strong> ${dataFromInput.name}</p>
-    <p><strong>อีเมล์:</strong> ${dataFromInput.email}</p>
-    <p><strong>เบอร์โทรศัพท์:</strong> ${dataFromInput.phone}</p>
-    <hr />
-    <p><strong>รายละเอียด:</strong></p>
-    <p>${dataFromInput.message}</p>
-  `,
+      <p><strong>ชื่อ-นามสกุล:</strong> ${dataFromInput.name}</p>
+      <p><strong>อีเมล์:</strong> ${dataFromInput.email}</p>
+      <p><strong>เบอร์โทรศัพท์:</strong> ${dataFromInput.phone}</p>
+      <hr />
+      <p><strong>รายละเอียด:</strong></p>
+      <p>${dataFromInput.message}</p>
+    `,
   };
-  เมื่อคุณใช้แบบนี้: try {
+
+  try {
     await transporter.sendMail(emailOptions);
-    console.log("Verification email sent!");
     res.status(200).json({ message: "Email sent successfully" });
   } catch (error) {
     console.error("Error sending email:", error);
@@ -78,61 +80,35 @@ app.post("/send-email", async (req, res) => {
   }
 });
 
-// ตั้งค่า storage สำหรับ multer
+// ✅ เปลี่ยนจาก query เป็น body เพื่อให้ใช้งานกับ form-data ได้
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const folderName = req.body.folderName;
+    if (!folderName) {
+      return cb(new Error("folderName is missing in body"));
+    }
     const targetPath = path.join("public", folderName);
     cb(null, targetPath);
   },
   filename: (req, file, cb) => {
-    // ดึงชื่อไฟล์จากฟอร์ม
-    const filenameWithoutExtension = req.body.filename; // ชื่อไฟล์ที่ได้รับจาก frontend
-
-    // ตรวจสอบนามสกุลไฟล์
+    const filenameWithoutExtension = req.body.filename;
     const extension = path.extname(file.originalname).toLowerCase();
-
-    // ตั้งชื่อไฟล์ใหม่ให้เป็น .jpg หรือ .jpeg
     const newFileName =
-      filenameWithoutExtension + (extension === ".jpeg" ? ".jpg" : extension); // เปลี่ยน .jpeg เป็น .jpg ถ้าต้องการ
-
-    cb(null, newFileName); // บันทึกชื่อไฟล์ใหม่
+      filenameWithoutExtension + (extension === ".jpeg" ? ".jpg" : extension);
+    cb(null, newFileName);
   },
 });
 
 const upload = multer({
-  storage,
-  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB
+  dest: tempDir,
+  limits: { fileSize: 20 * 1024 * 1024 }, // limit 20MB
 });
 
-// Route สำหรับอัปโหลดไฟล์ (อัปเดตไฟล์)
-const allowedExtensions = [".jpg", ".jpeg", ".png", ".webp"];
-
+// อัปเดตไฟล์
 app.put("/upload", upload.single("file"), async (req, res) => {
   try {
-    const uploadedFile = req.file;
-    const customFileName = req.body.filename;
-    const folderName = req.body.folderName; // รับข้อมูลชื่อโฟลเดอร์
-
-    if (!uploadedFile) {
-      return res
-        .status(400)
-        .json({ success: false, message: "ไม่พบไฟล์ที่อัปโหลด" });
-    }
-
-    if (!customFileName) {
-      return res
-        .status(400)
-        .json({ success: false, message: "ไม่ระบุชื่อไฟล์ใหม่" });
-    }
-
-    if (!folderName) {
-      return res
-        .status(400)
-        .json({ success: false, message: "ไม่ระบุชื่อโฟลเดอร์" });
-    }
-
-    // เช็คให้แน่ใจว่าโฟลเดอร์ที่ส่งมามีอยู่ในรายการที่อนุญาต
+    const file = req.file;
+    const { filename, folderName } = req.body;
     const allowedFolders = [
       "AboutUs",
       "ActiveFresh",
@@ -145,44 +121,61 @@ app.put("/upload", upload.single("file"), async (req, res) => {
       "Products",
       "Projects",
     ];
+    const allowedExt = [".jpg", ".jpeg", ".png", ".webp"];
 
+    // ตรวจสอบ input
+    if (!file) {
+      return res
+        .status(400)
+        .json({ success: false, message: "ไม่พบไฟล์ที่อัปโหลด" });
+    }
+    if (!filename || !folderName) {
+      return res.status(400).json({
+        success: false,
+        message: "กรุณาระบุทั้ง filename และ folderName",
+      });
+    }
     if (!allowedFolders.includes(folderName)) {
       return res
         .status(400)
         .json({ success: false, message: "โฟลเดอร์ที่ระบุไม่ถูกต้อง" });
     }
 
-    const folderPath = path.join(__dirname, "public", folderName);
-    const newExtension = path.extname(uploadedFile.originalname).toLowerCase(); // เช่น .jpeg
-    const baseName = path.basename(
-      customFileName,
-      path.extname(customFileName)
-    ); // เช่น "swimming"
-    const newFileName = baseName + newExtension;
-    const newFilePath = path.join(folderPath, newFileName);
+    // เตรียมโฟลเดอร์ปลายทาง
+    const targetDir = path.join(__dirname, "public", folderName);
+    if (!fs.existsSync(targetDir)) {
+      fs.mkdirSync(targetDir, { recursive: true });
+    }
 
-    // 🔥 ลบไฟล์เก่าทุกนามสกุล เช่น swimming.jpg, swimming.jpeg, swimming.png
-    for (const ext of allowedExtensions) {
-      const oldFilePath = path.join(folderPath, baseName + ext);
-      if (fs.existsSync(oldFilePath)) {
-        fs.unlinkSync(oldFilePath);
-        console.log(`ลบไฟล์เก่า: ${oldFilePath}`);
+    // รีเนมไฟล์
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (!allowedExt.includes(ext)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "ประเภทไฟล์ไม่รองรับ" });
+    }
+    const baseName = path.basename(filename, path.extname(filename));
+    const newFileName = baseName + ext;
+    const newFilePath = path.join(targetDir, newFileName);
+
+    // ลบไฟล์เดิมที่มีนามสกุลต่างๆ
+    for (const e of allowedExt) {
+      const oldPath = path.join(targetDir, baseName + e);
+      if (fs.existsSync(oldPath)) {
+        fs.unlinkSync(oldPath);
       }
     }
 
-    // ✅ บันทึกไฟล์ใหม่
-    fs.renameSync(uploadedFile.path, newFilePath);
+    // ย้ายไฟล์จาก temp ไป public
+    fs.renameSync(file.path, newFilePath);
 
-    return res
-      .status(200)
-      .json({ success: true, filePath: `/${folderName}/${newFileName}` });
-  } catch (error) {
-    console.error("เกิดข้อผิดพลาด:", error);
-    return res.status(500).json({ success: false, message: "อัปโหลดล้มเหลว" });
+    res.json({ success: true, filePath: `/${folderName}/${newFileName}` });
+  } catch (err) {
+    console.error("Upload error:", err);
+    res.status(500).json({ success: false, message: "อัปโหลดล้มเหลว" });
   }
 });
 
-// อ่านไฟล์แบบ recursive
 const getAllImagePaths = (dirPath, baseUrl = "") => {
   let imagePaths = [];
   const files = fs.readdirSync(dirPath);
@@ -199,14 +192,13 @@ const getAllImagePaths = (dirPath, baseUrl = "") => {
         path.extname(file).toLowerCase()
       )
     ) {
-      imagePaths.push("/" + relPath.replace(/\\/g, "/")); // ปรับให้ URL ใช้ / แม้เป็น Windows
+      imagePaths.push("/" + relPath.replace(/\\/g, "/"));
     }
   }
 
   return imagePaths;
 };
 
-// Endpoint ดึงทุกรูป
 app.get("/images", (req, res) => {
   try {
     const allImages = getAllImagePaths(publicPath);
