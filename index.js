@@ -38,7 +38,7 @@ const corsOptions = {
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "Cache-Control"], // เพิ่ม Cache-Control ที่นี่
+  allowedHeaders: ["Content-Type", "Authorization"], // เพิ่ม Cache-Control ที่นี่
 };
 
 app.use(cors(corsOptions));
