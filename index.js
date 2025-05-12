@@ -80,25 +80,6 @@ app.post("/send-email", async (req, res) => {
   }
 });
 
-// ✅ เปลี่ยนจาก query เป็น body เพื่อให้ใช้งานกับ form-data ได้
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const folderName = req.body.folderName;
-    if (!folderName) {
-      return cb(new Error("folderName is missing in body"));
-    }
-    const targetPath = path.join("public", folderName);
-    cb(null, targetPath);
-  },
-  filename: (req, file, cb) => {
-    const filenameWithoutExtension = req.body.filename;
-    const extension = path.extname(file.originalname).toLowerCase();
-    const newFileName =
-      filenameWithoutExtension + (extension === ".jpeg" ? ".jpg" : extension);
-    cb(null, newFileName);
-  },
-});
-
 const upload = multer({
   dest: tempDir,
   limits: { fileSize: 20 * 1024 * 1024 }, // limit 20MB
@@ -192,10 +173,12 @@ const getAllImagePaths = (dirPath, baseUrl = "") => {
         path.extname(file).toLowerCase()
       )
     ) {
-      imagePaths.push("/" + relPath.replace(/\\/g, "/"));
+      imagePaths.push({
+        path: "/" + relPath.replace(/\\/g, "/"),
+        mtime: stat.mtime.getTime(), // ⏱ ส่ง timestamp ของการเปลี่ยนไฟล์ล่าสุด
+      });
     }
   }
-
   return imagePaths;
 };
 
